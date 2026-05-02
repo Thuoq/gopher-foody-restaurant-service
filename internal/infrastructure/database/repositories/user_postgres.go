@@ -14,9 +14,6 @@ type userPostgresRepo struct {
 }
 
 func NewUserPostgresRepository(db *gorm.DB) ports.UserRepository {
-	// Auto migrate user schema
-	_ = db.AutoMigrate(&domain.User{})
-
 	return &userPostgresRepo{
 		db: db,
 	}
