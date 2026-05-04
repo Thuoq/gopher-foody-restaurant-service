@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS categories (
+CREATE TABLE IF NOT EXISTS food_categories (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     icon_url TEXT,
