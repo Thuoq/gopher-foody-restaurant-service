@@ -42,7 +42,7 @@ func LoadConfig() (*Config, error) {
 	_ = viper.ReadInConfig() // Ignore error if .env file is missing, fallback to env vars
 
 	// Set defaults
-	viper.SetDefault("app_name", "gopher-identity-service")
+	viper.SetDefault("app_name", "gopher-foody-restaurant-service")
 	viper.SetDefault("app_env", "development")
 	viper.SetDefault("app_http_port", 8080)
 	viper.SetDefault("app_grpc_port", 9090)
