@@ -51,8 +51,8 @@ func (uc *adminCreateFoodUseCase) Execute(ctx context.Context, ownerID string, i
 	// 3. Add images
 	for _, imgURL := range input.Images {
 		foodImage := &domain.FoodImage{
-			FoodID: food.ID,
-			URL:    imgURL,
+			FoodID:   food.ID,
+			ImageURL: imgURL,
 		}
 		_ = uc.foodRepo.AddImage(ctx, foodImage)
 	}
