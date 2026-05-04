@@ -5,18 +5,21 @@ import (
 )
 
 type Router struct {
-	getProfileHandler *GetProfileHandler
+	restaurantHandler *RestaurantHandler
 }
 
-func NewRouter(getProfileHandler *GetProfileHandler) *Router {
+func NewRouter(restaurantHandler *RestaurantHandler) *Router {
 	return &Router{
-		getProfileHandler: getProfileHandler,
+		restaurantHandler: restaurantHandler,
 	}
 }
 
 func (r *Router) Register(api *gin.RouterGroup) {
-	userGroup := api.Group("/sso")
+	// Public user routes (No auth required for viewing)
+	restaurants := api.Group("/restaurants")
 	{
-		userGroup.GET("/profile/:id", r.getProfileHandler.Handle)
+		restaurants.GET("", r.restaurantHandler.List)
+		restaurants.GET("/:id", r.restaurantHandler.GetDetail)
+		restaurants.GET("/:id/foods", r.restaurantHandler.GetMenu)
 	}
 }

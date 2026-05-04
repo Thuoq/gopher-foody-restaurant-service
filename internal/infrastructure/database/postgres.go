@@ -3,6 +3,8 @@ package database
 import (
 	"errors"
 	"fmt"
+	"gopher-restaurant-service/internal/config"
+	"gopher-restaurant-service/migrations"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
@@ -10,9 +12,6 @@ import (
 	"go.uber.org/zap"
 	gormpostgres "gorm.io/driver/postgres"
 	"gorm.io/gorm"
-
-	"gopher-identity-service/internal/config"
-	"gopher-identity-service/migrations"
 )
 
 func NewPostgresDB(cfg *config.Config, logger *zap.Logger) (*gorm.DB, error) {

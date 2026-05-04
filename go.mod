@@ -1,4 +1,4 @@
-module gopher-identity-service
+module gopher-restaurant-service
 
 go 1.26
 

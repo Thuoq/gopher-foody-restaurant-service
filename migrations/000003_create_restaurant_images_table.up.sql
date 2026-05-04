@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS restaurant_images (
+    id SERIAL PRIMARY KEY,
+    restaurant_id INTEGER NOT NULL REFERENCES restaurants(id) ON DELETE CASCADE,
+    image_url TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);

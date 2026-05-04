@@ -4,11 +4,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 
-	"gopher-identity-service/internal/config"
-	"gopher-identity-service/internal/presentation/http/handlers/user"
+	"gopher-restaurant-service/internal/config"
+	"gopher-restaurant-service/internal/presentation/http/handlers/admin"
+	"gopher-restaurant-service/internal/presentation/http/handlers/user"
 )
 
-func NewRouter(cfg *config.Config, logger *zap.Logger, userRouter *user.Router) *gin.Engine {
+func NewRouter(cfg *config.Config, logger *zap.Logger, adminRouter *admin.Router, userRouter *user.Router) *gin.Engine {
 	if cfg.App.Env == "production" {
 		gin.SetMode(gin.ReleaseMode)
 	}
@@ -26,6 +27,7 @@ func NewRouter(cfg *config.Config, logger *zap.Logger, userRouter *user.Router) 
 	})
 
 	api := r.Group("/api/v1")
+	adminRouter.Register(api)
 	userRouter.Register(api)
 
 	return r
