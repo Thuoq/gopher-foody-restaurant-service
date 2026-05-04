@@ -4,6 +4,6 @@ import (
 	"context"
 )
 
-type IMediaUseCase interface {
-	GetUploadURL(ctx context.Context, fileName string, contentType string) (*GeneratePresignedURLOutput, error)
+type IGetUploadURLUseCase interface {
+	Execute(ctx context.Context, fileName string, contentType string) (*GeneratePresignedURLOutput, error)
 }

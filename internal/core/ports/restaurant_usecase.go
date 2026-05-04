@@ -32,10 +32,26 @@ type ListRestaurantsInput struct {
 	Limit   int
 }
 
-type IRestaurantUseCase interface {
-	CreateRestaurant(ctx context.Context, input CreateRestaurantInput) (*domain.Restaurant, error)
-	ListRestaurants(ctx context.Context, input ListRestaurantsInput) ([]domain.Restaurant, int64, error)
-	GetRestaurantDetail(ctx context.Context, publicID string) (*domain.Restaurant, error)
-	UpdateRestaurant(ctx context.Context, input UpdateRestaurantInput) (*domain.Restaurant, error)
-	DeleteRestaurant(ctx context.Context, ownerID string, publicID string) error
+type IAdminCreateRestaurantUseCase interface {
+	Execute(ctx context.Context, input CreateRestaurantInput) (*domain.Restaurant, error)
+}
+
+type IAdminUpdateRestaurantUseCase interface {
+	Execute(ctx context.Context, input UpdateRestaurantInput) (*domain.Restaurant, error)
+}
+
+type IAdminDeleteRestaurantUseCase interface {
+	Execute(ctx context.Context, ownerID string, publicID string) error
+}
+
+type IAdminListMyRestaurantsUseCase interface {
+	Execute(ctx context.Context, input ListRestaurantsInput) ([]domain.Restaurant, int64, error)
+}
+
+type IUserListRestaurantsUseCase interface {
+	Execute(ctx context.Context, input ListRestaurantsInput) ([]domain.Restaurant, int64, error)
+}
+
+type IUserGetRestaurantDetailUseCase interface {
+	Execute(ctx context.Context, publicID string) (*domain.Restaurant, error)
 }

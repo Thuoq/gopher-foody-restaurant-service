@@ -13,14 +13,20 @@ import (
 )
 
 type RestaurantHandler struct {
-	restaurantUseCase ports.IRestaurantUseCase
-	foodUseCase       ports.IFoodUseCase
+	listUC   ports.IUserListRestaurantsUseCase
+	detailUC ports.IUserGetRestaurantDetailUseCase
+	menuUC   ports.IUserListMenuUseCase
 }
 
-func NewRestaurantHandler(restaurantUseCase ports.IRestaurantUseCase, foodUseCase ports.IFoodUseCase) *RestaurantHandler {
+func NewRestaurantHandler(
+	listUC ports.IUserListRestaurantsUseCase,
+	detailUC ports.IUserGetRestaurantDetailUseCase,
+	menuUC ports.IUserListMenuUseCase,
+) *RestaurantHandler {
 	return &RestaurantHandler{
-		restaurantUseCase: restaurantUseCase,
-		foodUseCase:       foodUseCase,
+		listUC:   listUC,
+		detailUC: detailUC,
+		menuUC:   menuUC,
 	}
 }
 
@@ -38,7 +44,7 @@ func (h *RestaurantHandler) List(c *gin.Context) {
 		Limit:  query.Limit,
 	}
 
-	restaurants, total, err := h.restaurantUseCase.ListRestaurants(c.Request.Context(), input)
+	restaurants, total, err := h.listUC.Execute(c.Request.Context(), input)
 	if err != nil {
 		response.Error(c, http.StatusInternalServerError, "failed to fetch restaurants")
 		return
@@ -55,7 +61,7 @@ func (h *RestaurantHandler) List(c *gin.Context) {
 
 func (h *RestaurantHandler) GetDetail(c *gin.Context) {
 	id := c.Param("id")
-	restaurant, err := h.restaurantUseCase.GetRestaurantDetail(c.Request.Context(), id)
+	restaurant, err := h.detailUC.Execute(c.Request.Context(), id)
 	if err != nil {
 		response.Error(c, http.StatusNotFound, "restaurant not found")
 		return
@@ -66,7 +72,7 @@ func (h *RestaurantHandler) GetDetail(c *gin.Context) {
 
 func (h *RestaurantHandler) GetMenu(c *gin.Context) {
 	id := c.Param("id")
-	foods, err := h.foodUseCase.ListRestaurantMenu(c.Request.Context(), id)
+	foods, err := h.menuUC.Execute(c.Request.Context(), id)
 	if err != nil {
 		response.Error(c, http.StatusInternalServerError, "failed to fetch menu")
 		return

@@ -13,7 +13,9 @@ import (
 	"go.uber.org/dig"
 	"go.uber.org/zap"
 
-	"gopher-restaurant-service/internal/application/usecases"
+	"gopher-restaurant-service/internal/application/usecases/food"
+	"gopher-restaurant-service/internal/application/usecases/media"
+	"gopher-restaurant-service/internal/application/usecases/restaurant"
 	"gopher-restaurant-service/internal/config"
 	"gopher-restaurant-service/internal/infrastructure/database"
 	"gopher-restaurant-service/internal/infrastructure/database/repositories"
@@ -38,10 +40,22 @@ func BuildContainer() *dig.Container {
 	container.Provide(repositories.NewCategoryPostgresRepository)
 	container.Provide(storage.NewS3StorageService)
 
-	// Application
-	container.Provide(usecases.NewRestaurantUseCase)
-	container.Provide(usecases.NewFoodUseCase)
-	container.Provide(usecases.NewMediaUseCase)
+	// Application - Restaurant
+	container.Provide(restaurant.NewAdminCreateRestaurantUseCase)
+	container.Provide(restaurant.NewAdminUpdateRestaurantUseCase)
+	container.Provide(restaurant.NewAdminDeleteRestaurantUseCase)
+	container.Provide(restaurant.NewAdminListMyRestaurantsUseCase)
+	container.Provide(restaurant.NewUserListRestaurantsUseCase)
+	container.Provide(restaurant.NewUserGetRestaurantDetailUseCase)
+
+	// Application - Food
+	container.Provide(food.NewAdminCreateFoodUseCase)
+	container.Provide(food.NewAdminUpdateFoodUseCase)
+	container.Provide(food.NewAdminDeleteFoodUseCase)
+	container.Provide(food.NewUserListMenuUseCase)
+
+	// Application - Media
+	container.Provide(media.NewGetUploadURLUseCase)
 
 	// Presentation
 	container.Provide(admin.NewRestaurantHandler)

@@ -10,12 +10,23 @@ import (
 )
 
 type FoodHandler struct {
-	foodUseCase ports.IFoodUseCase
+	createUC   ports.IAdminCreateFoodUseCase
+	updateUC   ports.IAdminUpdateFoodUseCase
+	deleteUC   ports.IAdminDeleteFoodUseCase
+	listMenuUC ports.IUserListMenuUseCase
 }
 
-func NewFoodHandler(foodUseCase ports.IFoodUseCase) *FoodHandler {
+func NewFoodHandler(
+	createUC ports.IAdminCreateFoodUseCase,
+	updateUC ports.IAdminUpdateFoodUseCase,
+	deleteUC ports.IAdminDeleteFoodUseCase,
+	listMenuUC ports.IUserListMenuUseCase,
+) *FoodHandler {
 	return &FoodHandler{
-		foodUseCase: foodUseCase,
+		createUC:   createUC,
+		updateUC:   updateUC,
+		deleteUC:   deleteUC,
+		listMenuUC: listMenuUC,
 	}
 }
 
@@ -38,7 +49,7 @@ func (h *FoodHandler) Create(c *gin.Context) {
 		Images:             req.Images,
 	}
 
-	food, err := h.foodUseCase.CreateFood(c.Request.Context(), ownerID, input)
+	food, err := h.createUC.Execute(c.Request.Context(), ownerID, input)
 	if err != nil {
 		response.Error(c, http.StatusInternalServerError, err.Error())
 		return
@@ -49,7 +60,7 @@ func (h *FoodHandler) Create(c *gin.Context) {
 
 func (h *FoodHandler) GetMenu(c *gin.Context) {
 	restaurantID := c.Param("id")
-	foods, err := h.foodUseCase.ListRestaurantMenu(c.Request.Context(), restaurantID)
+	foods, err := h.listMenuUC.Execute(c.Request.Context(), restaurantID)
 	if err != nil {
 		response.Error(c, http.StatusInternalServerError, "failed to fetch menu")
 		return
@@ -79,7 +90,7 @@ func (h *FoodHandler) Update(c *gin.Context) {
 		Images:      req.Images,
 	}
 
-	food, err := h.foodUseCase.UpdateFood(c.Request.Context(), ownerID, input)
+	food, err := h.updateUC.Execute(c.Request.Context(), ownerID, input)
 	if err != nil {
 		response.Error(c, http.StatusForbidden, err.Error())
 		return
@@ -92,7 +103,7 @@ func (h *FoodHandler) Delete(c *gin.Context) {
 	id := c.Param("food_id")
 	ownerID := c.GetString("public_user_id")
 
-	if err := h.foodUseCase.DeleteFood(c.Request.Context(), ownerID, id); err != nil {
+	if err := h.deleteUC.Execute(c.Request.Context(), ownerID, id); err != nil {
 		response.Error(c, http.StatusForbidden, err.Error())
 		return
 	}

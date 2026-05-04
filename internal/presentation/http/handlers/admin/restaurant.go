@@ -11,12 +11,23 @@ import (
 )
 
 type RestaurantHandler struct {
-	restaurantUseCase ports.IRestaurantUseCase
+	createUC   ports.IAdminCreateRestaurantUseCase
+	updateUC   ports.IAdminUpdateRestaurantUseCase
+	deleteUC   ports.IAdminDeleteRestaurantUseCase
+	listMyUC   ports.IAdminListMyRestaurantsUseCase
 }
 
-func NewRestaurantHandler(restaurantUseCase ports.IRestaurantUseCase) *RestaurantHandler {
+func NewRestaurantHandler(
+	createUC ports.IAdminCreateRestaurantUseCase,
+	updateUC ports.IAdminUpdateRestaurantUseCase,
+	deleteUC ports.IAdminDeleteRestaurantUseCase,
+	listMyUC ports.IAdminListMyRestaurantsUseCase,
+) *RestaurantHandler {
 	return &RestaurantHandler{
-		restaurantUseCase: restaurantUseCase,
+		createUC:   createUC,
+		updateUC:   updateUC,
+		deleteUC:   deleteUC,
+		listMyUC:   listMyUC,
 	}
 }
 
@@ -43,7 +54,7 @@ func (h *RestaurantHandler) Create(c *gin.Context) {
 		BannerURL:   req.BannerURL,
 	}
 
-	restaurant, err := h.restaurantUseCase.CreateRestaurant(c.Request.Context(), input)
+	restaurant, err := h.createUC.Execute(c.Request.Context(), input)
 	if err != nil {
 		response.Error(c, http.StatusInternalServerError, "failed to create restaurant")
 		return
@@ -69,7 +80,7 @@ func (h *RestaurantHandler) GetMyRestaurants(c *gin.Context) {
 		Limit:   query.Limit,
 	}
 
-	restaurants, total, err := h.restaurantUseCase.ListRestaurants(c.Request.Context(), input)
+	restaurants, total, err := h.listMyUC.Execute(c.Request.Context(), input)
 	if err != nil {
 		response.Error(c, http.StatusInternalServerError, "failed to fetch restaurants")
 		return
@@ -99,7 +110,7 @@ func (h *RestaurantHandler) Update(c *gin.Context) {
 		BannerURL:   req.BannerURL,
 	}
 
-	restaurant, err := h.restaurantUseCase.UpdateRestaurant(c.Request.Context(), input)
+	restaurant, err := h.updateUC.Execute(c.Request.Context(), input)
 	if err != nil {
 		response.Error(c, http.StatusForbidden, err.Error())
 		return
@@ -112,7 +123,7 @@ func (h *RestaurantHandler) Delete(c *gin.Context) {
 	id := c.Param("id")
 	ownerID := c.GetString("public_user_id")
 
-	if err := h.restaurantUseCase.DeleteRestaurant(c.Request.Context(), ownerID, id); err != nil {
+	if err := h.deleteUC.Execute(c.Request.Context(), ownerID, id); err != nil {
 		response.Error(c, http.StatusForbidden, err.Error())
 		return
 	}

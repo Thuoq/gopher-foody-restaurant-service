@@ -12,7 +12,7 @@ type CreateFoodInput struct {
 	Description        string
 	Price              float64
 	Quantity           int
-	Images             []string // List of image URLs
+	Images             []string
 }
 
 type UpdateFoodInput struct {
@@ -26,9 +26,18 @@ type UpdateFoodInput struct {
 	Images      []string
 }
 
-type IFoodUseCase interface {
-	CreateFood(ctx context.Context, ownerID string, input CreateFoodInput) (*domain.Food, error)
-	ListRestaurantMenu(ctx context.Context, restaurantPublicID string) ([]domain.Food, error)
-	UpdateFood(ctx context.Context, ownerID string, input UpdateFoodInput) (*domain.Food, error)
-	DeleteFood(ctx context.Context, ownerID string, publicID string) error
+type IAdminCreateFoodUseCase interface {
+	Execute(ctx context.Context, ownerID string, input CreateFoodInput) (*domain.Food, error)
+}
+
+type IAdminUpdateFoodUseCase interface {
+	Execute(ctx context.Context, ownerID string, input UpdateFoodInput) (*domain.Food, error)
+}
+
+type IAdminDeleteFoodUseCase interface {
+	Execute(ctx context.Context, ownerID string, publicID string) error
+}
+
+type IUserListMenuUseCase interface {
+	Execute(ctx context.Context, restaurantPublicID string) ([]domain.Food, error)
 }

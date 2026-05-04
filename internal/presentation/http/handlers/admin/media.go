@@ -9,12 +9,12 @@ import (
 )
 
 type MediaHandler struct {
-	mediaUseCase ports.IMediaUseCase
+	getUploadURLUC ports.IGetUploadURLUseCase
 }
 
-func NewMediaHandler(mediaUseCase ports.IMediaUseCase) *MediaHandler {
+func NewMediaHandler(getUploadURLUC ports.IGetUploadURLUseCase) *MediaHandler {
 	return &MediaHandler{
-		mediaUseCase: mediaUseCase,
+		getUploadURLUC: getUploadURLUC,
 	}
 }
 
@@ -30,7 +30,7 @@ func (h *MediaHandler) GetUploadURL(c *gin.Context) {
 		return
 	}
 
-	result, err := h.mediaUseCase.GetUploadURL(c.Request.Context(), req.FileName, req.ContentType)
+	result, err := h.getUploadURLUC.Execute(c.Request.Context(), req.FileName, req.ContentType)
 	if err != nil {
 		response.Error(c, http.StatusInternalServerError, "failed to generate upload url")
 		return
