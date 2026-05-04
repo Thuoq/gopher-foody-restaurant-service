@@ -8,6 +8,7 @@ type Config struct {
 	App      AppConfig      `mapstructure:",squash"`
 	Database DatabaseConfig `mapstructure:",squash"`
 	Logger   LoggerConfig   `mapstructure:",squash"`
+	S3       AWSS3Config    `mapstructure:",squash"`
 }
 
 type AppConfig struct {
@@ -28,6 +29,13 @@ type DatabaseConfig struct {
 
 type LoggerConfig struct {
 	Level string `mapstructure:"logger_level"`
+}
+
+type AWSS3Config struct {
+	Region          string `mapstructure:"aws_region"`
+	BucketName      string `mapstructure:"aws_s3_bucket"`
+	AccessKeyID     string `mapstructure:"aws_access_key_id"`
+	SecretAccessKey string `mapstructure:"aws_secret_access_key"`
 }
 
 func LoadConfig() (*Config, error) {

@@ -57,3 +57,45 @@ func (h *FoodHandler) GetMenu(c *gin.Context) {
 
 	response.Success(c, http.StatusOK, foods)
 }
+
+func (h *FoodHandler) Update(c *gin.Context) {
+	id := c.Param("food_id")
+	var req request.UpdateFoodRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.Error(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	ownerID := c.GetString("public_user_id")
+
+	input := ports.UpdateFoodInput{
+		PublicID:    id,
+		CategoryID:  req.CategoryID,
+		Name:        req.Name,
+		Description: req.Description,
+		Price:       req.Price,
+		Quantity:    req.Quantity,
+		Status:      req.Status,
+		Images:      req.Images,
+	}
+
+	food, err := h.foodUseCase.UpdateFood(c.Request.Context(), ownerID, input)
+	if err != nil {
+		response.Error(c, http.StatusForbidden, err.Error())
+		return
+	}
+
+	response.Success(c, http.StatusOK, food)
+}
+
+func (h *FoodHandler) Delete(c *gin.Context) {
+	id := c.Param("food_id")
+	ownerID := c.GetString("public_user_id")
+
+	if err := h.foodUseCase.DeleteFood(c.Request.Context(), ownerID, id); err != nil {
+		response.Error(c, http.StatusForbidden, err.Error())
+		return
+	}
+
+	response.Success(c, http.StatusOK, gin.H{"message": "food deleted"})
+}

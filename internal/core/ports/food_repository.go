@@ -10,6 +10,7 @@ type FoodRepository interface {
 	GetByPublicID(ctx context.Context, publicID string) (*domain.Food, error)
 	ListByRestaurant(ctx context.Context, restaurantID uint) ([]domain.Food, error)
 	Update(ctx context.Context, food *domain.Food) error
+	Delete(ctx context.Context, publicID string) error
 	
 	// Image related
 	AddImage(ctx context.Context, image *domain.FoodImage) error

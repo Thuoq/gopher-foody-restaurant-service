@@ -1,6 +1,6 @@
 package request
 
-type CreateRestaurantRequest struct {
+type UpdateRestaurantRequest struct {
 	Name        string `json:"name" binding:"required"`
 	Address     string `json:"address" binding:"required"`
 	Description string `json:"description"`

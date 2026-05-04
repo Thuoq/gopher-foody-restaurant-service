@@ -3,8 +3,10 @@ package user
 import (
 	"gopher-restaurant-service/internal/core/domain"
 	"gopher-restaurant-service/internal/core/ports"
+	"gopher-restaurant-service/internal/presentation/http/handlers/user/dto/request"
 	dto "gopher-restaurant-service/internal/presentation/http/handlers/user/dto/response"
 	"gopher-restaurant-service/pkg/response"
+	"gopher-restaurant-service/pkg/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -23,17 +25,31 @@ func NewRestaurantHandler(restaurantUseCase ports.IRestaurantUseCase, foodUseCas
 }
 
 func (h *RestaurantHandler) List(c *gin.Context) {
-	restaurants, err := h.restaurantUseCase.ListRestaurants(c.Request.Context())
+	var query request.UserRestaurantQuery
+	if err := c.ShouldBindQuery(&query); err != nil {
+		response.Error(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	input := ports.ListRestaurantsInput{
+		Search: query.Search,
+		Status: "active", // Customers only see active restaurants
+		Page:   query.Page,
+		Limit:  query.Limit,
+	}
+
+	restaurants, total, err := h.restaurantUseCase.ListRestaurants(c.Request.Context(), input)
 	if err != nil {
 		response.Error(c, http.StatusInternalServerError, "failed to fetch restaurants")
 		return
 	}
 
-	res := make([]dto.RestaurantResponse, len(restaurants))
+	resData := make([]dto.RestaurantResponse, len(restaurants))
 	for i, r := range restaurants {
-		res[i] = mapRestaurantToDTO(r)
+		resData[i] = mapRestaurantToDTO(r)
 	}
 
+	res := utils.NewPaginatedResponse(resData, total, query.Page, query.Limit)
 	response.Success(c, http.StatusOK, res)
 }
 

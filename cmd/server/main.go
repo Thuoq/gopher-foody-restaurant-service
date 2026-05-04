@@ -17,6 +17,7 @@ import (
 	"gopher-restaurant-service/internal/config"
 	"gopher-restaurant-service/internal/infrastructure/database"
 	"gopher-restaurant-service/internal/infrastructure/database/repositories"
+	"gopher-restaurant-service/internal/infrastructure/storage"
 	httpRouter "gopher-restaurant-service/internal/presentation/http"
 	"gopher-restaurant-service/internal/presentation/http/handlers/admin"
 	"gopher-restaurant-service/internal/presentation/http/handlers/user"
@@ -35,14 +36,17 @@ func BuildContainer() *dig.Container {
 	container.Provide(repositories.NewRestaurantPostgresRepository)
 	container.Provide(repositories.NewFoodPostgresRepository)
 	container.Provide(repositories.NewCategoryPostgresRepository)
+	container.Provide(storage.NewS3StorageService)
 
 	// Application
 	container.Provide(usecases.NewRestaurantUseCase)
 	container.Provide(usecases.NewFoodUseCase)
+	container.Provide(usecases.NewMediaUseCase)
 
 	// Presentation
 	container.Provide(admin.NewRestaurantHandler)
 	container.Provide(admin.NewFoodHandler)
+	container.Provide(admin.NewMediaHandler)
 	container.Provide(admin.NewRouter)
 	
 	container.Provide(user.NewRestaurantHandler)

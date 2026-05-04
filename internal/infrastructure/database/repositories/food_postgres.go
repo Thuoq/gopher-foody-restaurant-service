@@ -38,6 +38,10 @@ func (r *foodPostgresRepository) Update(ctx context.Context, food *domain.Food) 
 	return r.db.WithContext(ctx).Save(food).Error
 }
 
+func (r *foodPostgresRepository) Delete(ctx context.Context, publicID string) error {
+	return r.db.WithContext(ctx).Where("public_id = ?", publicID).Delete(&domain.Food{}).Error
+}
+
 func (r *foodPostgresRepository) AddImage(ctx context.Context, image *domain.FoodImage) error {
 	return r.db.WithContext(ctx).Create(image).Error
 }
