@@ -13,8 +13,8 @@ import (
 	"go.uber.org/dig"
 	"go.uber.org/zap"
 
-	"gopher-restaurant-service/internal/application/usecases/food_category"
 	"gopher-restaurant-service/internal/application/usecases/food"
+	"gopher-restaurant-service/internal/application/usecases/food_category"
 	"gopher-restaurant-service/internal/application/usecases/media"
 	"gopher-restaurant-service/internal/application/usecases/restaurant"
 	"gopher-restaurant-service/internal/config"
@@ -70,10 +70,10 @@ func BuildContainer() *dig.Container {
 	container.Provide(admin.NewMediaHandler)
 	container.Provide(admin.NewFoodCategoryHandler)
 	container.Provide(admin.NewRouter)
-	
+
 	container.Provide(user.NewRestaurantHandler)
 	container.Provide(user.NewRouter)
-	
+
 	container.Provide(httpRouter.NewRouter)
 
 	return container
