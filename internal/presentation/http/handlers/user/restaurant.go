@@ -34,7 +34,8 @@ func NewRestaurantHandler(
 func (h *RestaurantHandler) List(c *gin.Context) {
 	var query request.UserRestaurantQuery
 	if err := c.ShouldBindQuery(&query); err != nil {
-		response.Error(c, http.StatusBadRequest, err.Error())
+		fieldErrors := response.ParseValidationErrors(err)
+		response.ValidationError(c, http.StatusBadRequest, "invalid query parameters", fieldErrors)
 		return
 	}
 

@@ -26,7 +26,8 @@ type uploadURLRequest struct {
 func (h *MediaHandler) GetUploadURL(c *gin.Context) {
 	var req uploadURLRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		response.Error(c, http.StatusBadRequest, err.Error())
+		fieldErrors := response.ParseValidationErrors(err)
+		response.ValidationError(c, http.StatusBadRequest, "invalid request body", fieldErrors)
 		return
 	}
 

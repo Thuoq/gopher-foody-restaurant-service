@@ -36,7 +36,8 @@ func NewRestaurantHandler(
 func (h *RestaurantHandler) Create(c *gin.Context) {
 	var req request.CreateRestaurantRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		response.Error(c, http.StatusBadRequest, err.Error())
+		fieldErrors := response.ParseValidationErrors(err)
+		response.ValidationError(c, http.StatusBadRequest, "invalid request body", fieldErrors)
 		return
 	}
 
@@ -70,7 +71,8 @@ func (h *RestaurantHandler) Create(c *gin.Context) {
 func (h *RestaurantHandler) GetMyRestaurants(c *gin.Context) {
 	var query request.AdminRestaurantQuery
 	if err := c.ShouldBindQuery(&query); err != nil {
-		response.Error(c, http.StatusBadRequest, err.Error())
+		fieldErrors := response.ParseValidationErrors(err)
+		response.ValidationError(c, http.StatusBadRequest, "invalid query parameters", fieldErrors)
 		return
 	}
 
@@ -98,7 +100,8 @@ func (h *RestaurantHandler) Update(c *gin.Context) {
 	id := c.Param("id")
 	var req request.UpdateRestaurantRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		response.Error(c, http.StatusBadRequest, err.Error())
+		fieldErrors := response.ParseValidationErrors(err)
+		response.ValidationError(c, http.StatusBadRequest, "invalid request body", fieldErrors)
 		return
 	}
 

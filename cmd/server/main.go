@@ -86,7 +86,7 @@ func main() {
 		ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 		defer stop()
 
-		// Start HTTP Server
+		// 1. Start HTTP Server
 		httpServer := &http.Server{
 			Addr:    fmt.Sprintf(":%d", cfg.App.HTTPPort),
 			Handler: router,
@@ -99,13 +99,14 @@ func main() {
 			}
 		}()
 
-		// Wait for interrupt signal to gracefully shutdown
+		// 2. Wait for interrupt signal to gracefully shutdown
 		<-ctx.Done()
 		log.Info("Shutting down Restaurant Service gracefully...")
 
 		shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
 
+		// HTTP Shutdown
 		if err := httpServer.Shutdown(shutdownCtx); err != nil {
 			log.Error("HTTP Server forced to shutdown", zap.Error(err))
 		}

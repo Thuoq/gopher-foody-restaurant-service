@@ -34,7 +34,8 @@ func NewFoodCategoryHandler(
 func (h *FoodCategoryHandler) Create(c *gin.Context) {
 	var req request.CreateFoodCategoryRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		response.Error(c, http.StatusBadRequest, err.Error())
+		fieldErrors := response.ParseValidationErrors(err)
+		response.ValidationError(c, http.StatusBadRequest, "invalid request body", fieldErrors)
 		return
 	}
 
@@ -58,7 +59,8 @@ func (h *FoodCategoryHandler) Update(c *gin.Context) {
 
 	var req request.UpdateFoodCategoryRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		response.Error(c, http.StatusBadRequest, err.Error())
+		fieldErrors := response.ParseValidationErrors(err)
+		response.ValidationError(c, http.StatusBadRequest, "invalid request body", fieldErrors)
 		return
 	}
 
