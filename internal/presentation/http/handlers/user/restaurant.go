@@ -1,6 +1,7 @@
 package user
 
 import (
+	"errors"
 	"gopher-restaurant-service/internal/core/domain"
 	"gopher-restaurant-service/internal/core/ports"
 	"gopher-restaurant-service/internal/presentation/http/handlers/user/dto/request"
@@ -63,7 +64,11 @@ func (h *RestaurantHandler) GetDetail(c *gin.Context) {
 	id := c.Param("id")
 	restaurant, err := h.detailUC.Execute(c.Request.Context(), id)
 	if err != nil {
-		response.Error(c, http.StatusNotFound, "restaurant not found")
+		if errors.Is(err, domain.ErrRestaurantNotFound) {
+			response.Error(c, http.StatusNotFound, err.Error())
+			return
+		}
+		response.Error(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 

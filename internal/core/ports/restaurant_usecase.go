@@ -17,11 +17,11 @@ type CreateRestaurantInput struct {
 type UpdateRestaurantInput struct {
 	PublicID    string
 	OwnerID     string
-	Name        string
-	Address     string
-	Description string
-	LogoURL     string
-	BannerURL   string
+	Name        *string
+	Address     *string
+	Description *string
+	LogoURL     *string
+	BannerURL   *string
 }
 
 type ListRestaurantsInput struct {

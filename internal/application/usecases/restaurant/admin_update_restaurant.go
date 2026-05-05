@@ -26,15 +26,25 @@ func (uc *adminUpdateRestaurantUseCase) Execute(ctx context.Context, input ports
 
 	// 2. Authorization check
 	if restaurant.OwnerID != input.OwnerID {
-		return nil, errors.New("unauthorized: you do not own this restaurant")
+		return nil, domain.ErrUnauthorized
 	}
 
-	// 3. Update fields
-	restaurant.Name = input.Name
-	restaurant.Address = input.Address
-	restaurant.Description = input.Description
-	restaurant.LogoURL = input.LogoURL
-	restaurant.BannerURL = input.BannerURL
+	// 3. Update fields (Partial update)
+	if input.Name != nil {
+		restaurant.Name = *input.Name
+	}
+	if input.Address != nil {
+		restaurant.Address = *input.Address
+	}
+	if input.Description != nil {
+		restaurant.Description = *input.Description
+	}
+	if input.LogoURL != nil {
+		restaurant.LogoURL = *input.LogoURL
+	}
+	if input.BannerURL != nil {
+		restaurant.BannerURL = *input.BannerURL
+	}
 
 	if err := uc.restaurantRepo.Update(ctx, restaurant); err != nil {
 		return nil, err

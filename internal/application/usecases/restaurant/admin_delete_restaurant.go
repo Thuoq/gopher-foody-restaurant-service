@@ -2,7 +2,7 @@ package restaurant
 
 import (
 	"context"
-	"errors"
+	"gopher-restaurant-service/internal/core/domain"
 	"gopher-restaurant-service/internal/core/ports"
 )
 
@@ -25,7 +25,7 @@ func (uc *adminDeleteRestaurantUseCase) Execute(ctx context.Context, ownerID str
 
 	// 2. Authorization check
 	if restaurant.OwnerID != ownerID {
-		return errors.New("unauthorized: you do not own this restaurant")
+		return domain.ErrUnauthorized
 	}
 
 	return uc.restaurantRepo.Delete(ctx, publicID)

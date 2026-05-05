@@ -1,6 +1,8 @@
 package admin
 
 import (
+	"errors"
+	"gopher-restaurant-service/internal/core/domain"
 	"gopher-restaurant-service/internal/core/ports"
 	"gopher-restaurant-service/internal/presentation/http/handlers/admin/dto/request"
 	"gopher-restaurant-service/pkg/response"
@@ -114,7 +116,15 @@ func (h *RestaurantHandler) Update(c *gin.Context) {
 
 	restaurant, err := h.updateUC.Execute(c.Request.Context(), input)
 	if err != nil {
-		response.Error(c, http.StatusForbidden, err.Error())
+		if errors.Is(err, domain.ErrRestaurantNotFound) {
+			response.Error(c, http.StatusNotFound, err.Error())
+			return
+		}
+		if errors.Is(err, domain.ErrUnauthorized) {
+			response.Error(c, http.StatusForbidden, err.Error())
+			return
+		}
+		response.Error(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -128,7 +138,15 @@ func (h *RestaurantHandler) Delete(c *gin.Context) {
 	ownerID := c.GetString("public_user_id")
 
 	if err := h.deleteUC.Execute(c.Request.Context(), ownerID, id); err != nil {
-		response.Error(c, http.StatusForbidden, err.Error())
+		if errors.Is(err, domain.ErrRestaurantNotFound) {
+			response.Error(c, http.StatusNotFound, err.Error())
+			return
+		}
+		if errors.Is(err, domain.ErrUnauthorized) {
+			response.Error(c, http.StatusForbidden, err.Error())
+			return
+		}
+		response.Error(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
