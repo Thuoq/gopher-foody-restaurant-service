@@ -11,14 +11,16 @@ type RestaurantResponse struct {
 	BannerURL   string                   `json:"banner_url"`
 	Status      string                   `json:"status"`
 	Images      []domain.RestaurantImage `json:"images,omitempty"`
+	Foods       []FoodResponse           `json:"foods,omitempty"`
 }
 
 type FoodResponse struct {
-	PublicID    string             `json:"id"`
-	Name        string             `json:"name"`
-	Description string             `json:"description"`
-	Price       float64            `json:"price"`
-	Quantity    int                `json:"quantity"`
-	Status      string             `json:"status"`
-	Images      []domain.FoodImage `json:"images,omitempty"`
+	PublicID    string              `json:"id"`
+	Name        string              `json:"name"`
+	Description string              `json:"description"`
+	Price       float64             `json:"price"`
+	Quantity    int                 `json:"quantity"`
+	Status      string              `json:"status"`
+	Category    domain.FoodCategory `json:"category,omitempty"`
+	Images      []domain.FoodImage  `json:"images,omitempty"`
 }

@@ -13,7 +13,8 @@ type Food struct {
 	Quantity     int         `json:"quantity" gorm:"default:0"`
 	Status       string      `json:"status" gorm:"default:available"`
 	Images       []FoodImage `json:"images" gorm:"foreignKey:FoodID"`
-	CreatedAt    time.Time   `json:"created_at"`
+	Category     FoodCategory `json:"category" gorm:"foreignKey:CategoryID"`
+	CreatedAt    time.Time    `json:"created_at"`
 	UpdatedAt    time.Time   `json:"updated_at"`
 }
 

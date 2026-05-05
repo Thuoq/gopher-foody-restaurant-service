@@ -100,6 +100,20 @@ func (h *RestaurantHandler) GetMenu(c *gin.Context) {
 }
 
 func mapRestaurantToDTO(r domain.Restaurant) dto.RestaurantResponse {
+	foods := make([]dto.FoodResponse, len(r.Foods))
+	for i, f := range r.Foods {
+		foods[i] = dto.FoodResponse{
+			PublicID:    f.PublicID,
+			Name:        f.Name,
+			Description: f.Description,
+			Price:       f.Price,
+			Quantity:    f.Quantity,
+			Status:      f.Status,
+			Category:    f.Category,
+			Images:      f.Images,
+		}
+	}
+
 	return dto.RestaurantResponse{
 		PublicID:    r.PublicID,
 		Name:        r.Name,
@@ -109,5 +123,6 @@ func mapRestaurantToDTO(r domain.Restaurant) dto.RestaurantResponse {
 		BannerURL:   r.BannerURL,
 		Status:      r.Status,
 		Images:      r.Images,
+		Foods:       foods,
 	}
 }

@@ -30,7 +30,12 @@ func (r *restaurantPostgresRepository) GetByID(ctx context.Context, id uint) (*d
 
 func (r *restaurantPostgresRepository) GetByPublicID(ctx context.Context, publicID string) (*domain.Restaurant, error) {
 	var restaurant domain.Restaurant
-	err := r.db.WithContext(ctx).Preload("Images").Where("public_id = ?", publicID).First(&restaurant).Error
+	err := r.db.WithContext(ctx).
+		Preload("Images").
+		Preload("Foods").
+		Preload("Foods.Images").
+		Preload("Foods.Category").
+		Where("public_id = ?", publicID).First(&restaurant).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, domain.ErrRestaurantNotFound

@@ -2,7 +2,6 @@ package restaurant
 
 import (
 	"context"
-	"errors"
 	"gopher-restaurant-service/internal/core/domain"
 	"gopher-restaurant-service/internal/core/ports"
 )
