@@ -11,10 +11,10 @@ import (
 )
 
 type RestaurantHandler struct {
-	createUC   ports.IAdminCreateRestaurantUseCase
-	updateUC   ports.IAdminUpdateRestaurantUseCase
-	deleteUC   ports.IAdminDeleteRestaurantUseCase
-	listMyUC   ports.IAdminListMyRestaurantsUseCase
+	createUC ports.IAdminCreateRestaurantUseCase
+	updateUC ports.IAdminUpdateRestaurantUseCase
+	deleteUC ports.IAdminDeleteRestaurantUseCase
+	listMyUC ports.IAdminListMyRestaurantsUseCase
 }
 
 func NewRestaurantHandler(
@@ -24,10 +24,10 @@ func NewRestaurantHandler(
 	listMyUC ports.IAdminListMyRestaurantsUseCase,
 ) *RestaurantHandler {
 	return &RestaurantHandler{
-		createUC:   createUC,
-		updateUC:   updateUC,
-		deleteUC:   deleteUC,
-		listMyUC:   listMyUC,
+		createUC: createUC,
+		updateUC: updateUC,
+		deleteUC: deleteUC,
+		listMyUC: listMyUC,
 	}
 }
 
@@ -60,7 +60,9 @@ func (h *RestaurantHandler) Create(c *gin.Context) {
 		return
 	}
 
-	response.Success(c, http.StatusCreated, restaurant)
+	response.Success(c, http.StatusCreated, map[string]interface{}{
+		"id": restaurant.ID,
+	})
 }
 
 func (h *RestaurantHandler) GetMyRestaurants(c *gin.Context) {
@@ -116,7 +118,9 @@ func (h *RestaurantHandler) Update(c *gin.Context) {
 		return
 	}
 
-	response.Success(c, http.StatusOK, restaurant)
+	response.Success(c, http.StatusCreated, map[string]interface{}{
+		"id": restaurant.ID,
+	})
 }
 
 func (h *RestaurantHandler) Delete(c *gin.Context) {

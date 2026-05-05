@@ -28,7 +28,7 @@ func NewRouter(
 }
 
 func (r *Router) Register(api *gin.RouterGroup) {
-	admin := api.Group("/admin")
+	admin := api.Group("/restaurants/admin")
 	admin.Use(middleware.GatewayAuth())
 	{
 		// Media management
