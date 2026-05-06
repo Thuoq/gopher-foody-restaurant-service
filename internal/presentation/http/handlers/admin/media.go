@@ -2,7 +2,7 @@ package admin
 
 import (
 	"gopher-restaurant-service/internal/core/ports"
-	"gopher-restaurant-service/pkg/response"
+	"gopher-restaurant-service/pkg/app_response"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -26,16 +26,16 @@ type uploadURLRequest struct {
 func (h *MediaHandler) GetUploadURL(c *gin.Context) {
 	var req uploadURLRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		fieldErrors := response.ParseValidationErrors(err)
-		response.ValidationError(c, http.StatusBadRequest, "invalid request body", fieldErrors)
+		fieldErrors := app_response.ParseValidationErrors(err)
+		app_response.ValidationError(c, http.StatusBadRequest, "invalid request body", fieldErrors)
 		return
 	}
 
 	result, err := h.getUploadURLUC.Execute(c.Request.Context(), req.FileName, req.ContentType)
 	if err != nil {
-		response.Error(c, http.StatusInternalServerError, "failed to generate upload url")
+		app_response.Error(c, http.StatusInternalServerError, "failed to generate upload url")
 		return
 	}
 
-	response.Success(c, http.StatusOK, result)
+	app_response.Success(c, http.StatusOK, result)
 }

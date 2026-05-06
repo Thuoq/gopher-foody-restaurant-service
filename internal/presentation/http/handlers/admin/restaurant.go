@@ -5,7 +5,7 @@ import (
 	"gopher-restaurant-service/internal/core/domain"
 	"gopher-restaurant-service/internal/core/ports"
 	"gopher-restaurant-service/internal/presentation/http/handlers/admin/dto/request"
-	"gopher-restaurant-service/pkg/response"
+	"gopher-restaurant-service/pkg/app_response"
 	"gopher-restaurant-service/pkg/utils"
 	"net/http"
 
@@ -36,15 +36,15 @@ func NewRestaurantHandler(
 func (h *RestaurantHandler) Create(c *gin.Context) {
 	var req request.CreateRestaurantRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		fieldErrors := response.ParseValidationErrors(err)
-		response.ValidationError(c, http.StatusBadRequest, "invalid request body", fieldErrors)
+		fieldErrors := app_response.ParseValidationErrors(err)
+		app_response.ValidationError(c, http.StatusBadRequest, "invalid request body", fieldErrors)
 		return
 	}
 
 	// Get OwnerID from Gateway header (via GatewayAuth middleware)
 	ownerID := c.GetString("public_user_id")
 	if ownerID == "" {
-		response.Error(c, http.StatusUnauthorized, "missing user identity")
+		app_response.Error(c, http.StatusUnauthorized, "missing user identity")
 		return
 	}
 
@@ -59,11 +59,11 @@ func (h *RestaurantHandler) Create(c *gin.Context) {
 
 	restaurant, err := h.createUC.Execute(c.Request.Context(), input)
 	if err != nil {
-		response.Error(c, http.StatusInternalServerError, "failed to create restaurant")
+		app_response.Error(c, http.StatusInternalServerError, "failed to create restaurant")
 		return
 	}
 
-	response.Success(c, http.StatusCreated, map[string]interface{}{
+	app_response.Success(c, http.StatusCreated, map[string]interface{}{
 		"id": restaurant.ID,
 	})
 }
@@ -71,8 +71,8 @@ func (h *RestaurantHandler) Create(c *gin.Context) {
 func (h *RestaurantHandler) GetMyRestaurants(c *gin.Context) {
 	var query request.AdminRestaurantQuery
 	if err := c.ShouldBindQuery(&query); err != nil {
-		fieldErrors := response.ParseValidationErrors(err)
-		response.ValidationError(c, http.StatusBadRequest, "invalid query parameters", fieldErrors)
+		fieldErrors := app_response.ParseValidationErrors(err)
+		app_response.ValidationError(c, http.StatusBadRequest, "invalid query parameters", fieldErrors)
 		return
 	}
 
@@ -88,20 +88,20 @@ func (h *RestaurantHandler) GetMyRestaurants(c *gin.Context) {
 
 	restaurants, total, err := h.listMyUC.Execute(c.Request.Context(), input)
 	if err != nil {
-		response.Error(c, http.StatusInternalServerError, "failed to fetch restaurants")
+		app_response.Error(c, http.StatusInternalServerError, "failed to fetch restaurants")
 		return
 	}
 
 	res := utils.NewPaginatedResponse(restaurants, total, query.Page, query.Limit)
-	response.Success(c, http.StatusOK, res)
+	app_response.Success(c, http.StatusOK, res)
 }
 
 func (h *RestaurantHandler) Update(c *gin.Context) {
 	id := c.Param("id")
 	var req request.UpdateRestaurantRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		fieldErrors := response.ParseValidationErrors(err)
-		response.ValidationError(c, http.StatusBadRequest, "invalid request body", fieldErrors)
+		fieldErrors := app_response.ParseValidationErrors(err)
+		app_response.ValidationError(c, http.StatusBadRequest, "invalid request body", fieldErrors)
 		return
 	}
 
@@ -120,18 +120,18 @@ func (h *RestaurantHandler) Update(c *gin.Context) {
 	restaurant, err := h.updateUC.Execute(c.Request.Context(), input)
 	if err != nil {
 		if errors.Is(err, domain.ErrRestaurantNotFound) {
-			response.Error(c, http.StatusNotFound, err.Error())
+			app_response.Error(c, http.StatusNotFound, err.Error())
 			return
 		}
 		if errors.Is(err, domain.ErrUnauthorized) {
-			response.Error(c, http.StatusForbidden, err.Error())
+			app_response.Error(c, http.StatusForbidden, err.Error())
 			return
 		}
-		response.Error(c, http.StatusInternalServerError, err.Error())
+		app_response.Error(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	response.Success(c, http.StatusCreated, map[string]interface{}{
+	app_response.Success(c, http.StatusCreated, map[string]interface{}{
 		"id": restaurant.ID,
 	})
 }
@@ -142,16 +142,16 @@ func (h *RestaurantHandler) Delete(c *gin.Context) {
 
 	if err := h.deleteUC.Execute(c.Request.Context(), ownerID, id); err != nil {
 		if errors.Is(err, domain.ErrRestaurantNotFound) {
-			response.Error(c, http.StatusNotFound, err.Error())
+			app_response.Error(c, http.StatusNotFound, err.Error())
 			return
 		}
 		if errors.Is(err, domain.ErrUnauthorized) {
-			response.Error(c, http.StatusForbidden, err.Error())
+			app_response.Error(c, http.StatusForbidden, err.Error())
 			return
 		}
-		response.Error(c, http.StatusInternalServerError, err.Error())
+		app_response.Error(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	response.Success(c, http.StatusOK, gin.H{"message": "restaurant deleted"})
+	app_response.Success(c, http.StatusOK, gin.H{"message": "restaurant deleted"})
 }

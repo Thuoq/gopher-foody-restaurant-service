@@ -3,7 +3,7 @@ package admin
 import (
 	"gopher-restaurant-service/internal/core/ports"
 	"gopher-restaurant-service/internal/presentation/http/handlers/admin/dto/request"
-	"gopher-restaurant-service/pkg/response"
+	"gopher-restaurant-service/pkg/app_response"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -33,8 +33,8 @@ func NewFoodHandler(
 func (h *FoodHandler) Create(c *gin.Context) {
 	var req request.CreateFoodRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		fieldErrors := response.ParseValidationErrors(err)
-		response.ValidationError(c, http.StatusBadRequest, "invalid request body", fieldErrors)
+		fieldErrors := app_response.ParseValidationErrors(err)
+		app_response.ValidationError(c, http.StatusBadRequest, "invalid request body", fieldErrors)
 		return
 	}
 
@@ -52,30 +52,30 @@ func (h *FoodHandler) Create(c *gin.Context) {
 
 	food, err := h.createUC.Execute(c.Request.Context(), ownerID, input)
 	if err != nil {
-		response.Error(c, http.StatusInternalServerError, err.Error())
+		app_response.Error(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	response.Success(c, http.StatusCreated, food)
+	app_response.Success(c, http.StatusCreated, food)
 }
 
 func (h *FoodHandler) GetMenu(c *gin.Context) {
 	restaurantID := c.Param("id")
 	foods, err := h.listMenuUC.Execute(c.Request.Context(), restaurantID)
 	if err != nil {
-		response.Error(c, http.StatusInternalServerError, "failed to fetch menu")
+		app_response.Error(c, http.StatusInternalServerError, "failed to fetch menu")
 		return
 	}
 
-	response.Success(c, http.StatusOK, foods)
+	app_response.Success(c, http.StatusOK, foods)
 }
 
 func (h *FoodHandler) Update(c *gin.Context) {
 	id := c.Param("food_id")
 	var req request.UpdateFoodRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		fieldErrors := response.ParseValidationErrors(err)
-		response.ValidationError(c, http.StatusBadRequest, "invalid request body", fieldErrors)
+		fieldErrors := app_response.ParseValidationErrors(err)
+		app_response.ValidationError(c, http.StatusBadRequest, "invalid request body", fieldErrors)
 		return
 	}
 
@@ -94,11 +94,11 @@ func (h *FoodHandler) Update(c *gin.Context) {
 
 	food, err := h.updateUC.Execute(c.Request.Context(), ownerID, input)
 	if err != nil {
-		response.Error(c, http.StatusForbidden, err.Error())
+		app_response.Error(c, http.StatusForbidden, err.Error())
 		return
 	}
 
-	response.Success(c, http.StatusOK, food)
+	app_response.Success(c, http.StatusOK, food)
 }
 
 func (h *FoodHandler) Delete(c *gin.Context) {
@@ -106,9 +106,9 @@ func (h *FoodHandler) Delete(c *gin.Context) {
 	ownerID := c.GetString("public_user_id")
 
 	if err := h.deleteUC.Execute(c.Request.Context(), ownerID, id); err != nil {
-		response.Error(c, http.StatusForbidden, err.Error())
+		app_response.Error(c, http.StatusForbidden, err.Error())
 		return
 	}
 
-	response.Success(c, http.StatusOK, gin.H{"message": "food deleted"})
+	app_response.Success(c, http.StatusOK, gin.H{"message": "food deleted"})
 }

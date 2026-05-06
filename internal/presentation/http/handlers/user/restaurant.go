@@ -6,7 +6,7 @@ import (
 	"gopher-restaurant-service/internal/core/ports"
 	"gopher-restaurant-service/internal/presentation/http/handlers/user/dto/request"
 	dto "gopher-restaurant-service/internal/presentation/http/handlers/user/dto/response"
-	"gopher-restaurant-service/pkg/response"
+	"gopher-restaurant-service/pkg/app_response"
 	"gopher-restaurant-service/pkg/utils"
 	"net/http"
 
@@ -34,8 +34,8 @@ func NewRestaurantHandler(
 func (h *RestaurantHandler) List(c *gin.Context) {
 	var query request.UserRestaurantQuery
 	if err := c.ShouldBindQuery(&query); err != nil {
-		fieldErrors := response.ParseValidationErrors(err)
-		response.ValidationError(c, http.StatusBadRequest, "invalid query parameters", fieldErrors)
+		fieldErrors := app_response.ParseValidationErrors(err)
+		app_response.ValidationError(c, http.StatusBadRequest, "invalid query parameters", fieldErrors)
 		return
 	}
 
@@ -48,7 +48,7 @@ func (h *RestaurantHandler) List(c *gin.Context) {
 
 	restaurants, total, err := h.listUC.Execute(c.Request.Context(), input)
 	if err != nil {
-		response.Error(c, http.StatusInternalServerError, "failed to fetch restaurants")
+		app_response.Error(c, http.StatusInternalServerError, "failed to fetch restaurants")
 		return
 	}
 
@@ -58,7 +58,7 @@ func (h *RestaurantHandler) List(c *gin.Context) {
 	}
 
 	res := utils.NewPaginatedResponse(resData, total, query.Page, query.Limit)
-	response.Success(c, http.StatusOK, res)
+	app_response.Success(c, http.StatusOK, res)
 }
 
 func (h *RestaurantHandler) GetDetail(c *gin.Context) {
@@ -66,21 +66,21 @@ func (h *RestaurantHandler) GetDetail(c *gin.Context) {
 	restaurant, err := h.detailUC.Execute(c.Request.Context(), id)
 	if err != nil {
 		if errors.Is(err, domain.ErrRestaurantNotFound) {
-			response.Error(c, http.StatusNotFound, err.Error())
+			app_response.Error(c, http.StatusNotFound, err.Error())
 			return
 		}
-		response.Error(c, http.StatusInternalServerError, err.Error())
+		app_response.Error(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	response.Success(c, http.StatusOK, mapRestaurantToDTO(*restaurant))
+	app_response.Success(c, http.StatusOK, mapRestaurantToDTO(*restaurant))
 }
 
 func (h *RestaurantHandler) GetMenu(c *gin.Context) {
 	id := c.Param("id")
 	foods, err := h.menuUC.Execute(c.Request.Context(), id)
 	if err != nil {
-		response.Error(c, http.StatusInternalServerError, "failed to fetch menu")
+		app_response.Error(c, http.StatusInternalServerError, "failed to fetch menu")
 		return
 	}
 
@@ -97,7 +97,7 @@ func (h *RestaurantHandler) GetMenu(c *gin.Context) {
 		}
 	}
 
-	response.Success(c, http.StatusOK, res)
+	app_response.Success(c, http.StatusOK, res)
 }
 
 func mapRestaurantToDTO(r domain.Restaurant) dto.RestaurantResponse {
